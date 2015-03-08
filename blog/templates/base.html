@@ -33,8 +33,27 @@
                     <a class="navbar-brand" href="{{ url_for('posts') }}">Blogful</a>
                 </div>
                 <div class="collapse navbar-collapse">
+                  {% if current_user.is_authenticated() %}
+                  
                     <ul class="nav navbar-nav navbar-right">
+                      <li>
+                <p class="navbar-btn">
+                    <a href="{{ url_for('add_post_post') }}" class="btn btn-default">Post</a>
+                        </p></li>
+                      <li>
+                <p class="navbar-btn">
+                    <a href="{{ url_for('logout') }}" class="btn btn-default">Logout</a>
+                        </p></li>
+                      </ul>
+                      {% else %}
+                      <ul class="nav navbar-nav navbar-right">
+                      <li>
+                <p class="navbar-btn">
+                    <a href="{{ url_for('login_get') }}" class="btn btn-default">Login</a>
+                        </p></li>
+                      {% endif %}
                     </ul>
+                  
                 </div>
             </div>
         </div>
