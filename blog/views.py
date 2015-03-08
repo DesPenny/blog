@@ -57,3 +57,23 @@ def post(postid=Post.id):
         post=post,
         postid=postid,
     )  
+
+@app.route("/post/<postid>/edit", methods=["GET"])
+def edit_post_get(postid=Post.id):
+    return render_template("edit_post.html", post=post,postid=postid)
+
+@app.route("/post/<postid>/edit", methods=["POST"])
+def edit_post(postid):
+    title = request.form["title"]
+    content = mistune.markdown(request.form["content"])
+    session.query(Post).filter_by(id=postid).update(
+        {"title": title, "content": content}
+    )
+    session.commit()
+    return redirect(url_for("posts"))
+
+@app.route("/post/<postid>/delete", methods=["POST"])
+def delete_post(postid):
+    session.query(Post).filter_by(id=postid).delete()
+    session.commit()
+    return redirect(url_for("posts"))
