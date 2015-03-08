@@ -1,4 +1,5 @@
 env
-.pyc
+*.pyc
+blog/*.pyc
 .profile
 migrations/
