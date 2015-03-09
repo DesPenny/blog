@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, g
 
 from blog import app
 from .database import session
@@ -8,6 +8,12 @@ import mistune
 from flask import request, redirect, url_for
 from flask.ext.login import login_required
 from flask.ext.login import current_user
+
+from flask import flash
+from flask.ext.login import login_user, logout_user
+from werkzeug.security import check_password_hash
+from .models import User
+
 
 @app.route("/")
 @app.route("/page/<int:page>")
@@ -64,12 +70,20 @@ def post(postid=Post.id):
     )  
 
 @app.route("/post/<postid>/edit", methods=["GET"])
+@login_required
 def edit_post_get(postid):
+    post = session.query(Post).get(postid)
+    if not post.author_id==current_user.id:
+      raise AssertionError("Not Allowed")
     post = session.query(Post).get(postid)
     return render_template("edit_post.html", post=post,postid=postid)
 
 @app.route("/post/<postid>/edit", methods=["POST"])
+@login_required
 def edit_post(postid):
+    post = session.query(Post).get(postid)
+    if not post.author_id==current_user.id:
+      raise AssertionError("Not Allowed")
     title = request.form["title"]
     content = mistune.markdown(request.form["content"])
     session.query(Post).filter_by(id=postid).update(
@@ -79,20 +93,20 @@ def edit_post(postid):
     return redirect(url_for("posts"))
 
 @app.route("/post/<postid>/delete", methods=["POST"])
+@login_required
 def delete_post(postid):
+    post = session.query(Post).get(postid)
+    if not post.author_id==current_user.id:
+      raise AssertionError("Not Allowed")
     session.query(Post).filter_by(id=postid).delete()
     session.commit()
     return redirect(url_for("posts"))
+      
   
 @app.route("/login", methods=["GET"])
 def login_get():
     return render_template("login.html")
   
-from flask import flash
-from flask.ext.login import login_user, logout_user
-from werkzeug.security import check_password_hash
-from .models import User
-
 @app.route("/login", methods=["POST"])
 def login_post():
     email = request.form["email"]
