@@ -85,7 +85,8 @@ def edit_post(postid):
     if not post.author_id==current_user.id:
       raise AssertionError("Not Allowed")
     title = request.form["title"]
-    content = mistune.markdown(request.form["content"])
+    #content = mistune.markdown(request.form["content"])
+    content = request.form["content"]
     session.query(Post).filter_by(id=postid).update(
         {"title": title, "content": content}
     )

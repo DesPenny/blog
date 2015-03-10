@@ -11,7 +11,7 @@
         <h1>
             <a href="/post/{{ post.id }}">{{ post.title }}</a>
         </h1>
-        {{ post.content | safe }}
+        {{ post.content | markdown | safe }}
         {{ post.id }}
         {{ post.author.name }}
         <a href="/post/{{ post.id }}/edit"> Edit Post</a>
